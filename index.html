@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Design Patterns in Ruby</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href=".">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="active">
+                                <a href=".">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="design patterns/Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Command/">Command</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Factory/">Factory</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="design patterns/Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="disabled">
+                                <a rel="next" >
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="design patterns/Adapter/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#part-i-patterns-and-ruby">PART I: Patterns and Ruby</a></li>
+            <li><a href="#chapter1-building-better-programs-with-patterns">Chapter1: Building Better Programs with Patterns</a></li>
+            <li><a href="#chapter-2-getting-started-with-ruby">Chapter 2: Getting Started with Ruby</a></li>
+        <li class="main "><a href="#part-ii-patterns-in-ruby">PART II Patterns in Ruby</a></li>
+            <li><a href="#chapter-3-varying-the-algorithm-with-the-template-method">Chapter 3: Varying the Algorithm with the Template Method</a></li>
+            <li><a href="#chapter-4-replacing-the-algorithm-with-the-strategy">Chapter 4: Replacing the Algorithm with the Strategy</a></li>
+            <li><a href="#chapter-5-keeping-up-with-the-times-with-the-observer">Chapter 5: Keeping Up with the Times with the Observer</a></li>
+            <li><a href="#chapter6-assembling-the-whole-from-the-parts-with-the-composite">Chapter6: Assembling the Whole from the Parts with the Composite</a></li>
+            <li><a href="#chapter7-reaching-into-a-collection-with-the-iterator">Chapter7: Reaching into a Collection with the Iterator</a></li>
+            <li><a href="#chapter8-getting-things-done-with-commands">Chapter8: Getting Things Done with Commands</a></li>
+            <li><a href="#chapter9-filling-in-the-gaps-with-the-adapter">Chapter9: Filling in the Gaps with the Adapter</a></li>
+            <li><a href="#chapter10-getting-in-front-of-your-object-with-a-proxy">Chapter10: Getting in Front of Your Object with a Proxy</a></li>
+            <li><a href="#chapter11-improving-your-objects-with-a-decorator">Chapter11: Improving Your Objects with a Decorator</a></li>
+            <li><a href="#chapter12-making-sure-there-is-only-one-with-the-singleton">Chapter12: Making Sure There Is Only One with the Singleton</a></li>
+            <li><a href="#chapter13-picking-the-right-class-with-a-factory">Chapter13: Picking the Right Class with a Factory</a></li>
+            <li><a href="#chapter14-easier-object-construction-with-the-builder">Chapter14: Easier Object Construction with the Builder</a></li>
+            <li><a href="#chapter15-assembling-your-system-with-the-interpreter">Chapter15: Assembling Your System with the Interpreter</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p><a href="https://book.douban.com/subject/2365029/"><img alt="Design patterns in Ruby" src="https://img3.doubanio.com/view/subject/l/public/s4263121.jpg" /></a></p>
+<h3 id="part-i-patterns-and-ruby">PART I: Patterns and Ruby</h3>
+<h4 id="chapter1-building-better-programs-with-patterns">Chapter1: Building Better Programs with Patterns</h4>
+<p><strong>Patterns for Patterns</strong></p>
+<p>关于设计模式的著名的一本书: Design Patterns: Elements of Reusable Object-Oriented Software</p>
+<p>简称The Gang of Four, 因为作者是4个人, 在和他人沟通这本书的时候, 书名太长, 于是取了一个简称~</p>
+<p>关于设计模式有4个要点:</p>
+<ol>
+<li>Separate out the things that change from those that stay the same.</li>
+<li>Program to an interface, not an implementation.</li>
+<li>Prefer composition over inheritance.</li>
+<li>Delegate, delegate, delegate.</li>
+</ol>
+<p><strong>Separate out the things that change from those that stay the same</strong></p>
+<p>将变化和不变的分离开</p>
+<p><strong>Program to an interface, not an implementation</strong></p>
+<p>开发接口, 而不是实现</p>
+<p>示例: 交通工具行驶, 可以这样实现:</p>
+<pre><code class="ruby"># Deal with cars and planes
+if is_car
+  my_car = Car.new
+  my_car.drive(200)
+else
+  my_plane = AirPlane.new
+  my_plane.fly(200)
+end
+</code></pre>
+
+<p>用接口的方式可以这样做:</p>
+<pre><code class="ruby">my_vehicle = get_vehicle
+my_vehicle.travel(200)
+</code></pre>
+
+<h5 id="prefer-composition-over-inheritance">Prefer composition over inheritance</h5>
+<p>继承是这样做的:</p>
+<pre><code class="ruby">class Vehicle
+  # All sorts of vehicle-related code...
+  def start_engine
+    # Start the engine
+  end
+    def stop_engine
+      # Stop the engine
+  end
+end
+
+class Car &lt; Vehicle
+  def sunday_drive
+    start_engine
+    # Cruise out into the country and return
+    stop_engine
+  end
+end
+</code></pre>
+
+<p>car继承了父类的start_engine, stop_engine, 这样做的话要求所有的交通工具都需要引擎, 如果是自行车呢, 那么我们就需要改造Vehicle了.</p>
+<p>我们可以把engine独立出来, car还可以继承Vehicle, engine是可选的组件:</p>
+<pre><code class="ruby">class Engine
+  # All sorts of engine-related code...
+  def start
+    # Start the engine
+  end
+
+  def stop
+    # Stop the engine
+  end
+end
+
+class Car
+  def initialize
+    @engine = Engine.new
+  end
+
+  def sunday_drive
+    @engine.start
+    # Cruise out into the country and return...
+    @engine.stop
+  end
+end
+</code></pre>
+
+<p><strong>Delegate, delegate, delegate</strong></p>
+<p>在继承的实现里, car继承了Vehicle的start_engine和stop_engine方法, 那用composition的方法实现之后, 怎么实现这两个方法呢, 我们可以在Car里对engine做Delegate</p>
+<pre><code class="ruby">class Car
+  def initialize
+    @engine = GasolineEngine.new
+  end
+
+  def start_engine
+    @engine.start
+  end
+
+  def stop_engine
+    @engine.stop
+  end
+end
+</code></pre>
+
+<p><strong>You Ain’t Gonna Need It</strong></p>
+<p><strong>YAGNI</strong>, 开发的首要目的是解决问题, 设计模式是你解决问题的工具, 不要为了设计模式而去强行运用设计模式.</p>
+<p>过度的运用会导致程序变得复杂和难懂. Your code will work better only if it focuses on the job it needs to do right now.</p>
+<p><strong>Fourteen Out of Twenty-Three</strong></p>
+<p>23个设计模式中常用的14个</p>
+<ul>
+<li>Template Method</li>
+<li>Strategy</li>
+<li>Observer</li>
+<li>Composite</li>
+<li>Iterator</li>
+<li>Command</li>
+<li>Adapter</li>
+<li>Proxy</li>
+<li>Decorator</li>
+<li>Singleton</li>
+<li>Factory Method</li>
+<li>Abstract Factory</li>
+<li>Builder</li>
+<li>Interpreter</li>
+</ul>
+<h4 id="chapter-2-getting-started-with-ruby">Chapter 2: Getting Started with Ruby</h4>
+<p>如果你对其他编程语言很熟悉, 而且熟悉Python这样的动态语言的话, Ruby应该不会陌生. 这里就不再赘述了.</p>
+<p>代码规范往往很重要, 这里说明一下:</p>
+<p>Ruby的命名规则是小写字母或者单下划线开头, Ruby推荐用下划线的方式命名, 不推荐驼峰命名法. class name例外.</p>
+<p>常量命名是首字母大写, 常量也可以重新赋值, Ruby不做限制, 在irb解释器里会做提示, 但是我们为什么要重新赋值呢?</p>
+<h3 id="part-ii-patterns-in-ruby">PART II Patterns in Ruby</h3>
+<h4 id="chapter-3-varying-the-algorithm-with-the-template-method">Chapter 3: Varying the Algorithm with the Template Method</h4>
+<p>the general idea of the Template Method pattern is to build an abstract base class with a skeletal method.</p>
+<p>The Template Method pattern is simply a fancy way of saying that if you want to vary an algorithm, one way to do so is to code the invariant part in a base class and to encapsulate the variable parts in methods that are defined by a number of subclasses. The base class can simply leave the methods completely undefined—in that case, the subclasses must supply the methods. Alternatively, the base class can provide a default implementation for the methods that the subclasses can override if they want.</p>
+<h4 id="chapter-4-replacing-the-algorithm-with-the-strategy">Chapter 4: Replacing the Algorithm with the Strategy</h4>
+<p>The Strategy pattern is a delegation-based approach to solving the same problem as the Template Method pattern. Instead of teasing out the variable parts of your algo- rithm and pushing them down into subclasses, you simply implement each version of your algorithm as a separate object</p>
+<h4 id="chapter-5-keeping-up-with-the-times-with-the-observer">Chapter 5: Keeping Up with the Times with the Observer</h4>
+<p>The Observer pattern allows you to build components that know about the activities of other components without having to tightly couple everything together in an unmanageable mess of code-flavored spaghetti. By creating a clean interface between the source of the news (the observable object) and the consumer of that news (the observers), the Observer pattern moves the news without tangling things up.</p>
+<h4 id="chapter6-assembling-the-whole-from-the-parts-with-the-composite">Chapter6: Assembling the Whole from the Parts with the Composite</h4>
+<p>组合设计模式在面对这种层级结构时是利器, 他主要的目的是让层级结构的所有节点都是一样的, 但是又能保证层级结构. 在现实世界中这种层级结构是如此普遍, 所以组合设计模式也很通用, 而且有的设计模式其实就是组合设计模式的变种.</p>
+<h4 id="chapter7-reaching-into-a-collection-with-the-iterator">Chapter7: Reaching into a Collection with the Iterator</h4>
+<p>Provide a way to access the elements of an aggregate object sequentially without exposing its underlying representation</p>
+<h4 id="chapter8-getting-things-done-with-commands">Chapter8: Getting Things Done with Commands</h4>
+<h4 id="chapter9-filling-in-the-gaps-with-the-adapter">Chapter9: Filling in the Gaps with the Adapter</h4>
+<p>There really is no magic to adapters: They exist to soak up the differences between the interfaces that we need and the objects that we have</p>
+<h4 id="chapter10-getting-in-front-of-your-object-with-a-proxy">Chapter10: Getting in Front of Your Object with a Proxy</h4>
+<h4 id="chapter11-improving-your-objects-with-a-decorator">Chapter11: Improving Your Objects with a Decorator</h4>
+<p>what if you simply need to vary the responsibilities of an object? What do you do when sometimes your object needs to do a little more, but sometimes a little less?</p>
+<p>The Decorator pattern is the last of the “one object stands in for another” patterns that we will consider in this book. The first was the Adapter pattern; it hides the fact that some object has the wrong interface by wrapping it with an object that has the right interface. The second was the Proxy pattern. A proxy also wraps another object, but not with the intent of changing the interface. Instead, the proxy has the same interface as the object that it is wrapping. The proxy isn’t there to translate; it is there to control. Proxies are good for tasks such as enforcing security, hiding the fact that an object really lives across the network, and delaying the creation of the real object until the last possible moment. And then we have the subject of this chapter, the decorator, which enables you to layer features on to a basic object.</p>
+<h4 id="chapter12-making-sure-there-is-only-one-with-the-singleton">Chapter12: Making Sure There Is Only One with the Singleton</h4>
+<p>The motivation behind the Singleton pattern is very simple: There are some things that are unique. Programs frequently have a single configuration file. It is not unusual for a program to let you know how it is doing via a single log file. GUI applications frequently have a one main window, and they typically take input from exactly one keyboard. Many applications need to talk to exactly one database. If you only ever have one instance of a class and a lot of code that needs access to that instance, it seems silly to pass the object from one method to another. In this kind of situation, the GoF suggest that you build a <strong>singleton</strong>—a class that can have only one instance and that provides global access to that one instance.</p>
+<p>我们可以在class层面实现单例模式, 也是GOF推荐的模式, 也可以用全局变量来实现, 但是在唯一性方面是欠缺的.</p>
+<h4 id="chapter13-picking-the-right-class-with-a-factory">Chapter13: Picking the Right Class with a Factory</h4>
+<h4 id="chapter14-easier-object-construction-with-the-builder">Chapter14: Easier Object Construction with the Builder</h4>
+<h4 id="chapter15-assembling-your-system-with-the-interpreter">Chapter15: Assembling Your System with the Interpreter</h4></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.0.4
+Build Date UTC : 2020-01-09 08:48:21
+-->

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Command - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Command</a>
+</li>
+                                    
+<li >
+    <a href="../Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="../Factory/">Factory</a>
+</li>
+                                    
+<li >
+    <a href="../Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="../Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="../Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Builder/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../Composite/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p>我们还是说具体的场景, 在GUI里面的一个按钮, 不同的场景下需要点击按钮执行不同的操作, 熟悉的场景, 我们可以想到模板设计模式, 然后用策略设计模式进行优化:</p>
+<pre><code class="ruby">class SlickButton
+  attr_accessor :command
+  def initialize(command)
+    @command = command
+  end
+  #
+  # Lots of button drawing and management
+  # code omitted...
+  #
+  def on_button_push
+    @command.execute if @command
+  end
+end
+
+class SaveCommand
+  def execute
+    #
+    # Save the current document...
+    #
+  end
+end
+
+save_button = SlickButton.new( SaveCommand.new )
+</code></pre>
+
+<p>命令设计模式当然并不单单只是如此</p>
+<p>假设我们要执行的操作比较复杂呢, 创建一个文件, 复制, 然后删除原文件, 我们应该怎样实现这个command呢</p>
+<pre><code class="ruby">class Command
+  attr_reader :description
+
+  def initialize(description)
+    @description = description
+  end
+
+  def
+    execute
+  end
+end
+
+class CreateFile &lt; Command
+  def initialize(path, contents)
+    super(&quot;Create file: #{path}&quot;)
+    @path = path
+    @contents = contents
+  end
+
+  def execute
+    f = File.open(@path, &quot;w&quot;)
+    f.write(@contents)
+    f.close
+  end
+end
+
+class DeleteFile &lt; Command
+  def initialize(path)
+    super(&quot;Delete file: #{path}&quot;)
+    @path = path
+  end
+
+  def execute
+    File.delete(@path)
+  end
+end
+
+class CopyFile &lt; Command
+  def initialize(source, target)
+    super(&quot;Copy file: #{source} to #{target}&quot;)
+    @source = source
+    @target = target
+  end
+
+  def execute
+    FileUtils.copy(@source, @target)
+  end
+end
+
+class CompositeCommand &lt; Command
+  def initialize
+    @commands = []
+  end
+
+  def add_command(cmd)
+    @commands &lt;&lt; cmd
+  end
+
+  def execute
+    @commands.each {|cmd| cmd.execute}
+  end
+
+  def description
+    description = ''
+    @commands.each {|cmd| description += cmd.description + &quot;\n&quot;}
+    description
+  end
+end
+
+cmds = CompositeCommand.new
+cmds.add_command(CreateFile.new('file1.txt', &quot;hello world\n&quot;))
+cmds.add_command(CopyFile.new('file1.txt', 'file2.txt'))
+cmds.add_command(DeleteFile.new('file1.txt'))
+</code></pre>
+
+<p>这里又有一点像观察者模式. 所以命令设计模式其实是各种设计模式的组合变化. 但是各个设计模式有不同的应用场景.</p>
+<p>但是这三个操作是有联系的, 针对的是相关的文件.  文件又是可以配置的. 可以灵活配置和组合. 所以在一些复杂的事务里面可以用到命令模式</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

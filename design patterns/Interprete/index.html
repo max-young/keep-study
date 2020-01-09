@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Interprete - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="../Command/">Command</a>
+</li>
+                                    
+<li >
+    <a href="../Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="../Factory/">Factory</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="../Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="../Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Factory/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../Iterator/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p>在石器时代, 数据库的操作都是由数据库专家在做. 直到SQL语言的出现, 简单的语言就可以执行很多数据库操作. 还有web页面, 以前也是由专业工程师经过大量的工作来完成, 现在, 中学生都能通过HTML语言来渲染界面.</p>
+<p>这些都归功于Interpreter. Interpreter pattern被忽略, 因为程序员可能很擅长web开发和数据库设计, 但是却很少擅长AST和parser. 接下里我们来解释AST和parser.</p>
+<p>我们有一段搜索文件的代码, 有非常多丰富的功能, 我们可以搜索所有文件, 可以根据文件名, 是否可写, 文件大小来搜索, 也可以做or and 搜索.</p>
+<pre><code class="ruby">require 'find'
+
+class Expression
+  # Common expression code will go here soon...
+end
+
+class All &lt; Expression
+  def evaluate(dir)
+    results = []
+    Find.find(dir) do |p|
+      next unless File.file?(p)
+      results &lt;&lt; p
+    end
+    results
+  end
+end
+
+class FileName &lt; Expression
+  def initialize(pattern)
+    @pattern = pattern
+  end
+
+  def evaluate(dir)
+    results = []
+    Find.find(dir) do |p|
+      next unless File.file?(p)
+      name = File.basename(p)
+      results &lt;&lt; p if File.fnmatch(@pattern, name)
+    end
+    results
+  end
+end
+
+expr_all = All.new
+files = expr_all.evaluate('.')
+puts(files)
+
+puts('-------------------------------------')
+
+expr_txt = FileName.new('*.txt')
+txts = expr_txt.evaluate('.')
+puts(txts)
+
+puts('-------------------------------------')
+
+class Bigger &lt; Expression
+  def initialize(size)
+    @size = size
+  end
+
+  def evaluate(dir)
+    results = []
+    Find.find(dir) do |p|
+      next unless File.file?(p)
+      results &lt;&lt; p if(File.size(p) &gt; @size)
+    end
+    results
+  end
+end
+
+class Writable &lt; Expression
+  def evaluate(dir)
+    results = []
+    Find.find(dir) do |p|
+      next unless File.file?(p)
+      results &lt;&lt; p if(File.writable?(p))
+    end
+    results
+  end
+end
+
+class Not &lt; Expression
+  def initialize(expression)
+    @expression = expression
+  end
+
+  def evaluate(dir)
+    All.new.evaluate(dir) - @expression.evaluate(dir)
+  end
+end
+
+expr_not_writable = Not.new(Writable.new)
+readonly_files = expr_not_writable.evaluate('.')
+puts(readonly_files)
+
+puts('-------------------------------------')
+
+small_expr = Not.new(Bigger.new(1024))
+small_files = small_expr.evaluate('.')
+puts(small_files)
+
+puts('-------------------------------------')
+
+not_txt_expr = Not.new(FileName.new('*.txt'))
+not_txts = not_txt_expr.evaluate('.')
+puts(not_txts)
+
+puts('-------------------------------------')
+
+class Or &lt; Expression
+  def initialize(expression1, expression2)
+    @expression1 = expression1
+    @expression2 = expression2
+  end
+
+  def evaluate(dir)
+    result1 = @expression1.evaluate(dir)
+    result2 = @expression2.evaluate(dir)
+    (result1 + result2).sort.uniq
+  end
+end
+
+big_or_txt_expr = Or.new(Bigger.new(1024), FileName.new('*.mp3'))
+big_or_txts = big_or_txt_expr.evaluate('.')
+puts(big_or_txts)
+
+puts('-------------------------------------')
+
+class And &lt; Expression
+  def initialize(expression1, expression2)
+    @expression1 = expression1
+    @expression2 = expression2
+  end
+
+  def evaluate(dir)
+    result1 = @expression1.evaluate(dir)
+    result2 = @expression2.evaluate(dir)
+    (result1 &amp; result2)
+  end
+end
+
+complex_expression = And.new(
+  And.new(Bigger.new(1024), FileName.new('*.txt')),
+  Not.new(Writable.new))
+complex_result = complex_expression.evaluate('.')
+puts(complex_result)
+
+puts('-------------------------------------')
+</code></pre>
+
+<p>但是这些操作对于“用户”来说太复杂了, 我们可不可以提供简单的语句给“用户”, 来执行这些复杂的操作.</p>
+<p>那么我们首先要做的是: 抽象出AST(abstract syntax tree), 这里不详述了, 反正就是需要整理出一个抽象化的模型.</p>
+<p>比如我们需要查找大小大于1024kb, 类型是.rb, 并且是可写的文件, 那么我们可以抽象成:</p>
+<pre><code>and (and(bigger 1024)(filename *.rb)) writable
+</code></pre>
+
+<p>那么我们需要把这个语句parser成能执行的代码, 这样我们就需要构建一个parser:</p>
+<pre><code class="ruby">class Parser
+  def initialize(text)
+    @tokens = text.scan(/\(|\)|[\w\.\*]+/)
+  end
+
+  def next_token
+    @tokens.shift
+  end
+
+  def expression
+    token = next_token
+    if token == nil
+      return nil
+    elsif token == '('
+      result = expression
+      raise 'Expected )' unless next_token == ')'
+      result
+    elsif token == 'all'
+      return All.new
+    elsif token == 'writable'
+      return Writable.new
+    elsif token == 'bigger'
+      return Bigger.new(next_token.to_i)
+    elsif token == 'filename'
+      return FileName.new(next_token)
+    elsif token == 'not'
+      return Not.new(expression)
+    elsif token == 'and'
+      return And.new(expression, expression)
+    elsif token == 'or'
+      return Or.new(expression, expression)
+    else
+      raise &quot;Unexpected token: #{token}&quot;
+    end
+  end
+end
+
+parser = Parser.new &quot;and (and(bigger 1024)(filename *.rb)) writable&quot;
+ast = parser.expression
+result = ast.evaluate('.')
+puts(result)
+</code></pre>
+
+<p>这就是interpreter pattern.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Factory - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="../Command/">Command</a>
+</li>
+                                    
+<li >
+    <a href="../Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Factory</a>
+</li>
+                                    
+<li >
+    <a href="../Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="../Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="../Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Decorator/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../Interprete/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p>假设我们有一个模拟鸭子的类:</p>
+<pre><code class="ruby">class Duck
+  def initialize(name)
+    @name = name
+  end
+
+  def eat
+    puts(&quot;Duck #{@name} is eatings.&quot;)
+  end
+
+  def speak
+    puts(&quot;Duck #{@name} says Quack!&quot;)
+  end
+
+  def sleep
+    puts(&quot;Duck #{@name} sleeps quitely.&quot;)
+  end
+end
+</code></pre>
+
+<p>还有一个模拟鸭子在池塘里生活的类:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_ducks)
+    @ducks = []
+    number_ducks.times do |i|
+      duck = Duck.new(&quot;Duck#{i}&quot;)
+      @ducks &lt;&lt; duck
+    end
+  end
+
+  def simulate_one_day
+    @ducks.each {|duck| duck.speak}
+    @ducks.each {|duck| duck.eat}
+    @ducks.each {|duck| duck.sleep}
+  end
+end
+
+pond = Pond.new(3)
+pond.simulate_one_day
+</code></pre>
+
+<p>很完美, 知道有一天, 有新的需求, 我们还要模拟在池塘里生活的青蛙, 青蛙的类和鸭子类似:</p>
+<pre><code class="ruby">class Frog
+  def initialize(name)
+    @name = name
+  end
+
+  def eat
+    puts(&quot;Frog #{@name} is eatings.&quot;)
+  end
+
+  def speak
+    puts(&quot;Frog #{@name} says Crooooaaaak!&quot;)
+  end
+
+  def sleep
+    puts(&quot;Frog #{@name} doesn't sleep; he crosks all night!&quot;)
+  end
+end
+</code></pre>
+
+<p>那么怎么模拟青蛙在池塘生活呢? 修改Pond类吗? Pond类要兼容两者, 我们可以用Template模板设计模式来做, Pond改成一个基类, 然后创建两个子类, 如下所示:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_animals)
+    @animals = []
+    number_animals.times do |i|
+      animal = new_animal(&quot;Animal#{i}&quot;)
+      @animals &lt;&lt; animal
+    end
+  end
+
+  def simulate_one_day
+    @animals.each {|animal| animal.speak}
+    @animals.each {|animal| animal.eat}
+    @animals.each {|animal| animal.sleep}
+  end
+end
+
+class DuckPond &lt; Pond
+  def new_animal(name)
+    Duck.new(name)
+  end
+end
+
+class FrogPond &lt; Pond
+  def new_animal(name)
+    Frog.new(name)
+  end
+end
+
+pond = FrogPond.new(3)
+pond.simulate_one_day
+</code></pre>
+
+<p>我们用这张图老说明工厂模式:</p>
+<p>creator就是Pond class, DuckPond和FrogPond就是ConcreteCreator, Duck class和Frog Class就是products, 他们有一个基类(这里需要说明一下,  虽然两者没有显式的继承同一个基类, 但是两者都有同样的方法集, 可以视为同样的类)</p>
+<p>看到这里, 我们有个疑问, 这和Template模板设计模式有什么区别呢? 工厂设计模式只是把创建实例作为独立出来的方法放在子类中了, 其他和模板设计模式一样. 没有这么简单.</p>
+<p>假设又有其他需求, 池塘里面还有植物生长......</p>
+<pre><code class="ruby">class Algae
+  def initialize(name)
+    @name = name
+  end
+
+  def grow
+    puts(&quot;The Algae #{@name} soaks up the sun and grows&quot;)
+  end
+end
+
+def WaterLilly
+  def initialize(name)
+    @name = name
+  end
+
+  def grow
+    puts(&quot;The water lily #{@name} floats, soaks up the sun, and grows&quot;)
+  end
+end
+</code></pre>
+
+<p>假设在池塘里又有植物又有动物, 那么我们按照上面的创建子类的方式来做:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_animals, number_plants)
+    @animals = []
+    number_animals.times do |i|
+      animal = new_animal(&quot;Animal#{i}&quot;)
+      @animals &lt;&lt; animal
+    end
+
+    @plants = []
+    number_plants.times do |i|
+      plant = new_plant(&quot;Plant#{i}&quot;)
+      @plants &lt;&lt; plant
+    end
+  end
+
+  def simulate_one_day
+    @plants.each {|plant| plant.grow}
+    @animals.each {|animal| animal.speak}
+    @animals.each {|animal| animal.eat}
+    @animals.each {|animal| animal.sleep}
+  end
+end
+
+class DuckWaterLilyPond &lt; Pond
+  def new_animal(name)
+    Duck.new(name)
+  end
+
+  def new_plant(name)
+    WaterLilly.new(name)
+  end
+end
+
+class FrogAlgaePond &lt; Pond
+  def new_animal(name)
+    Frog.new(name)
+  end
+
+  def new_plant(name)
+    Algae.new(name)
+  end
+end
+
+pond = DuckWaterLilyPond.new(3, 4)
+pond.simulate_one_day
+pond = FrogAlgaePond.new(3, 4)
+pond.simulate_one_day
+</code></pre>
+
+<p>我们可以把创建实例的两个方法用参数化的方式统一成一个方法, 就变成:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_animals, number_plants)
+    @animals = []
+    number_animals.times do |i|
+      animal = new_organism(:animal, &quot;Animal#{i}&quot;)
+      @animals &lt;&lt; animal
+    end
+
+    @plants = []
+    number_plants.times do |i|
+      plant = new_organism(:plant, &quot;Plant#{i}&quot;)
+      @plants &lt;&lt; plant
+    end
+  end
+
+  def simulate_one_day
+    @plants.each {|plant| plant.grow}
+    @animals.each {|animal| animal.speak}
+    @animals.each {|animal| animal.eat}
+    @animals.each {|animal| animal.sleep}
+  end
+end
+
+class DuckWaterLilyPond &lt; Pond
+  def new_organism(type, name)
+    if type == :animal
+      Duck.new(name)
+    elsif type == :plant
+      WaterLilly.new(name)
+    else
+      raise &quot;Unknown organism type: #{type}&quot;
+    end
+  end
+end
+
+class FrogAlgaePond &lt; Pond
+  def new_organism(type, name)
+    if type == :animal
+      Frog.new(name)
+    elsif type == :plant
+      Algae.new(name)
+    else
+      raise &quot;Unknown organism type: #{type}&quot;
+    end
+  end
+end
+
+pond = DuckWaterLilyPond.new(3, 4)
+pond.simulate_one_day
+pond = FrogAlgaePond.new(3, 4)
+pond.simulate_one_day
+</code></pre>
+
+<p>在Ruby里class也是对象, 也可以作为参数, 那么我们可以把上面的代码简化为:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_animals, animal_class,
+                 number_plants, plant_class)
+    @animal_class = animal_class
+    @plant_class = plant_class
+
+    @animals = []
+    number_animals.times do |i|
+      animal = new_organism(:animal, &quot;Animal#{i}&quot;)
+      @animals &lt;&lt; animal
+    end
+
+    @plants = []
+    number_plants.times do |i|
+      plant = new_organism(:plant, &quot;Plant#{i}&quot;)
+      @plants &lt;&lt; plant
+    end
+  end
+
+  def simulate_one_day
+    @plants.each {|plant| plant.grow}
+    @animals.each {|animal| animal.speak}
+    @animals.each {|animal| animal.eat}
+    @animals.each {|animal| animal.sleep}
+  end
+
+  def new_organism(type, name)
+    if type == :animal
+      @animal_class.new(name)
+    elsif type == :plant
+      @plant_class.new(name)
+    else
+      raise &quot;Unknown organism type: #{type}&quot;
+    end
+  end
+end
+
+pond = Pond.new(3, Duck, 4, WaterLilly)
+pond.simulate_one_day
+pond = Pond.new(3, Frog, 4, Algae)
+pond.simulate_one_day
+</code></pre>
+
+<p>我们能不能进一步简化, 将两个生物类统一在一起呢:</p>
+<pre><code class="ruby">class Pond
+  def initialize(number_animals, number_plants, organism_factory)
+    @organism_factory = organism_factory
+
+    @animals = []
+    number_animals.times do |i|
+      animal = @organism_factory.new_animal(&quot;Animal#{i}&quot;)
+      @animals &lt;&lt; animal
+    end
+
+    @plants = []
+    number_plants.times do |i|
+      plant = @organism_factory.new_plant(&quot;Plant#{i}&quot;)
+      @plants &lt;&lt; plant
+    end
+  end
+
+  def simulate_one_day
+    @plants.each {|plant| plant.grow}
+    @animals.each {|animal| animal.speak}
+    @animals.each {|animal| animal.eat}
+    @animals.each {|animal| animal.sleep}
+  end
+
+end
+
+class OrganismFactory
+  def initialize(plant_class, animal_class)
+    @plant_class = plant_class
+    @animal_class = animal_class
+  end
+
+  def new_animal(name)
+    @animal_class.new(name)
+  end
+
+  def new_plant(name)
+    @plant_class.new(name)
+  end
+end
+
+waterlilly_duck_factory = OrganismFactory.new(WaterLilly, Duck)
+pond = Pond.new(3, 4, waterlilly_duck_factory)
+pond.simulate_one_day
+</code></pre>
+
+<p>好了, 我们已经说的够多了, 这就是工厂模式.</p>
+<p>我们需要注意的是, 不要滥用, 如果只是很简单的需求, 很少的类, 那么后面的那些“优化”都是多余的.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Composite - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="../Command/">Command</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="../Factory/">Factory</a>
+</li>
+                                    
+<li >
+    <a href="../Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="../Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="../Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Command/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../Decorator/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#composite-design-pattern-in-ruby">Composite design pattern in Ruby组合设计模式</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h3 id="composite-design-pattern-in-ruby">Composite design pattern in Ruby组合设计模式</h3>
+<p>我们在实际项目中经常会遇到层级树状结构的模型, 在实际生活中也经常遇到, 比如公司的部门层级等等, 我们在这里以做蛋糕举例, 我们需要了解到做蛋糕的步骤, 跟踪每一步的时间, 抽象成一张图比较一目了然:</p>
+<p><img alt="composite-design-pattern" src="/images/posts/2019/composite-design-pattern.png" /></p>
+<p>做蛋糕也可以抽象成层级结构, 那么我们按照组合设计模式应该怎么做呢:</p>
+<ol>
+<li>First, you need a common interface or base class for all of your objects. The GoF call this base class or interface the <strong>component</strong></li>
+</ol>
+<p>我们需要找到所有节点的共性, 来创建一个基类, 这个基类成为<strong>component</strong>元件, 在这里, 基类需要初始化做蛋糕各个分解任务的名称, 已经这个任务所需要的时间</p>
+<p>```ruby
+   class Task
+     attr_reader :name</p>
+<pre><code> def initialize(name)
+   @name = name
+ end
+
+ def get_time_required
+   0.0
+ end
+</code></pre>
+<p>end
+   ```</p>
+<ol>
+<li>Second, you need one or more <strong>leaf</strong> classes</li>
+</ol>
+<p>我们创建最底层的子节点的类, 继承基类</p>
+<p>```ruby
+   class AddDryIngredientsTask &lt; Task
+     def initialize
+       super('Add dry ingredients')
+     end</p>
+<pre><code> def get_time_required
+   1.0             # 1 minute to add flour and sugar
+ end
+</code></pre>
+<p>end</p>
+<p>class AddLiquidTask &lt; Task
+     def initialize
+       super('Add liquid')
+     end</p>
+<pre><code> def get_time_required
+   1.0
+ end
+</code></pre>
+<p>end</p>
+<p>class MixTask &lt; Task
+     def initialize
+       super('Mix that batter up!')
+     end</p>
+<pre><code> def get_time_required
+   3.0             # Mix for 3 minutes
+ end
+</code></pre>
+<p>end
+   ```</p>
+<ol>
+<li>Third, we need at least one higher-level class, which the GoF call the <strong>composite</strong> class</li>
+</ol>
+<p>创建高一级的类, 这个类跟最底层的类就不太一样了</p>
+<p>```ruby
+   class MakeBatterTask &lt; Task
+     def initialize
+       super('Make batter')
+       @sub_tasks = []
+       add_sub_task( AddDryIngredientsTask.new )
+       add_sub_task( AddLiquidsTask.new )
+       add_sub_task( MixTask.new )
+     end</p>
+<pre><code> def add_sub_task(task)
+   @sub_tasks &lt;&lt; task
+ end
+
+ def remove_sub_task(task)
+   @sub_tasks.delete(task)
+ end
+
+ def get_time_required
+   time=0.0
+   @sub_tasks.each {|task| time += task.get_time_required}
+   time
+ end
+</code></pre>
+<p>end
+   ```</p>
+<p>这里我们需要用到策略设计模式, 把添加删除子任务的功能独立出来, 优化如下:</p>
+<p>Because we will have a number of composite tasks in our baking example (pack- aging the cake as well as the master task of manufacturing the cake), it makes sense to factor out the details of managing the child tasks into another base class:</p>
+<p>```ruby
+   class CompositeTask &lt; Task
+     def initialize(name)
+       super(name)
+       @sub_tasks = []
+     end</p>
+<pre><code> def add_sub_task(task)
+   @sub_tasks &lt;&lt; task
+ end
+
+ def remove_sub_task(task)
+   @sub_tasks.delete(task)
+ end
+
+ def get_time_required
+   time=0.0
+   @sub_tasks.each {|task| time += task.get_time_required}
+   time
+ end
+</code></pre>
+<p>end
+   ```</p>
+<p>Our MakeBatterTask then reduces to the following code:</p>
+<p><code>ruby
+   class MakeBatterTask &lt; CompositeTask
+     def initialize
+       super('Make batter')
+       add_sub_task( AddDryIngredientsTask.new )
+       add_sub_task( AddLiquidsTask.new )
+       add_sub_task( MixTask.new )
+     end
+   end</code></p>
+<p>The key point to keep in mind about composite objects is that the tree may be arbitrarily deep.</p>
+<p>Any one of the subtasks of MakeCakeTask might be a composite.</p>
+<p>组合设计模式在面对这种层级结构时是利器, 他主要的目的是让层级结构的所有节点都是一样的, 但是又能保证层级结构. 在现实世界中这种层级结构是如此普遍, 所以组合设计模式也很通用, 而且有的设计模式其实就是组合设计模式的变种.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

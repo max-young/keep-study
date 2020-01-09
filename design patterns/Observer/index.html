@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Observer - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="../Command/">Command</a>
+</li>
+                                    
+<li >
+    <a href="../Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="../Factory/">Factory</a>
+</li>
+                                    
+<li >
+    <a href="../Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li >
+    <a href="../Template Method/">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Iterator/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="../Proxy/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p>假设有这样的情景, 职员的薪资变化了, 需要通知到薪资部门, 我们可以这么实现:</p>
+<pre><code class="ruby">class Employee
+ attr_reader :name
+ attr_accessor  :title, :salary
+ def initialize( name, title, salary, payroll )
+   @name = name
+   @title = title
+   @salary = salary
+   @payroll = payroll
+  end
+
+  def salary=(new_salary)
+    @salary = new_salary
+    @payroll.update(self)
+  end
+end
+
+class Payroll
+  def update( changed_employee )
+    puts(&quot;Cut a new check for #{changed_employee.name}!&quot;)
+    puts(&quot;His salary is now #{changed_employee.salary}!&quot;)
+  end
+end
+
+payroll = Payroll.new
+fred = Employee.new('Fred', 'Crane Operator', 30000, payroll)
+fred.salary = 35000
+</code></pre>
+
+<p>这样实现有两个问题:</p>
+<ol>
+<li>Employee和Payroll两个类“缠绕”在一起了</li>
+<li>如果还需要通知到其他部门, 我们还需要修改Employee的代码, 比如增加initialize的参数, 修改salary=函数</li>
+</ol>
+<p>为了解决这个问题, 我们可以这样做:</p>
+<pre><code class="ruby">class Employee
+ attr_reader :name
+ attr_accessor  :title, :salary
+ def initialize( name, title, salary )
+   @name = name
+   @title = title
+   @salary = salary
+   @observers = []
+  end
+
+  def salary=(new_salary)
+    @salary = new_salary
+    @notify_observers
+  end
+
+  def notify_observers
+    @observers.each do |observer|
+      observer.update(self)
+    end
+  end
+
+  def add_observer(observer)
+    @observers &lt;&lt; observer
+  end
+
+  def delete_observer(observer)
+    @observers.delete(observer)
+  end
+end
+
+class Payroll
+  def update( changed_employee )
+    puts(&quot;Cut a new check for #{changed_employee.name}!&quot;)
+    puts(&quot;His salary is now #{changed_employee.salary}!&quot;)
+  end
+end
+
+fred = Employee.new('Fred', 'Crane Operator', 30000.0)
+payroll = Payroll.new
+fred.add_observer( payroll )
+fred.salary=35000.0
+
+class TaxMan
+  def update( changed_employee )
+    puts(&quot;Send #{changed_employee.name} a new tax bill!&quot;)
+  end
+end
+
+tax_man = TaxMan.new
+fred.add_observer(tax_man)
+fred.salary=90000.0
+</code></pre>
+
+<p>这样我们就解决了上面的两个问题, 还有没有优化空间呢?</p>
+<p>对于Employee来说, 只需关注自身的逻辑即可, 通知Payroll这些observer的任务是附加的工作, 把notify_observer, add_obser, delete_observer放在类里面, 干扰了自身的逻辑, 切让代码看着很乱很庞大, 我们可以按照strategy设计模式一样, 把通知的任务独立出来</p>
+<pre><code class="ruby">module Subject
+  def initialize
+    @observers=[]
+  end
+
+  def add_observer(observer)
+    @observers &lt;&lt; observer
+  end
+
+  def delete_observer(observer)
+    @observer.delete(observer)
+  end
+
+  def notify_observers
+    @observers.each do |observer|
+      observer.update(self)
+    end
+  end
+end
+
+
+class Employee
+  include Subject
+
+  attr_reader :name, :title
+  attr_reader :salary
+
+  def initialize(name, title, salary)
+    super()
+    @name = name
+    @title = title
+    @salary = salary
+  end
+
+  def salary=(new_salary)
+    @salary = new_salary
+    notify_observers
+  end
+end
+
+class Payroll
+  def update(changed_employee)
+    puts(&quot;Cut a new check for #{changed_employee.name}!&quot;)
+    puts(&quot;His salary is now #{changed_employee.salary}&quot;)
+  end
+end
+
+fred = Employee.new(&quot;Fred Flintstone&quot;, &quot;Crane Operator&quot;, 30000.0)
+payroll = Payroll.new
+fred.add_observer(payroll)
+
+fred.salary = 35000.0
+
+class TaxMan
+  def update(changed_employee)
+    puts(&quot;Send #{changed_employee.name} a new tax bill!&quot;)
+  end
+end
+
+tax_man = TaxMan.new
+fred.add_observer(tax_man)
+
+fred.salary=90000.0
+</code></pre>
+
+<blockquote>
+<p>这里用到了Ruby的module, 因为Ruby只能继承一个父类, 如果把Subject写成一个类, Employee继承的话, 就不能继承其他父类了, 在Python里可以继承多个类, 就没有这个问题</p>
+</blockquote>
+<p>这就是Observer观察者设计模式, 创建一个干净的接口, 将被观察者和观察者隔离开来, 实现生产和消费, 而不用将两者耦合在一起</p>
+<p>The Observer pattern allows you to build components that know about the activities of other components without having to tightly couple everything together in an unmanageable mess of code-flavored spaghetti. By creating a clean interface between the source of the news (the observable object) and the consumer of that news (the observers), the Observer pattern moves the news without tangling things up.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

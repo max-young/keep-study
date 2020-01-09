@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Template - Design Patterns in Ruby</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">Design Patterns in Ruby</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Design patterns <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../Adapter/">Adapter</a>
+</li>
+                                    
+<li >
+    <a href="../Builder/">Builder</a>
+</li>
+                                    
+<li >
+    <a href="../Command/">Command</a>
+</li>
+                                    
+<li >
+    <a href="../Composite/">Composite</a>
+</li>
+                                    
+<li >
+    <a href="../Decorator/">Decorator</a>
+</li>
+                                    
+<li >
+    <a href="../Factory/">Factory</a>
+</li>
+                                    
+<li >
+    <a href="../Interprete/">Interprete</a>
+</li>
+                                    
+<li >
+    <a href="../Iterator/">Iterator</a>
+</li>
+                                    
+<li >
+    <a href="../Observer/">Observer</a>
+</li>
+                                    
+<li >
+    <a href="../Proxy/">Proxy</a>
+</li>
+                                    
+<li >
+    <a href="../Singleton/">Singleton</a>
+</li>
+                                    
+<li >
+    <a href="../Strategy/">Strategy</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Template</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../Strategy/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<p>直接用代码来说明</p>
+<p>假设我们有输出文本的需求, 基本的实现是这样的:</p>
+<pre><code class="ruby">class Report
+  def initialize
+    @title = 'Monthly Report'
+    @text =  [ 'Things are going', 'really, really well.' ]
+  end
+
+  def output_report
+    puts('&lt;html&gt;')
+    puts('  &lt;head&gt;')
+    puts(&quot;    &lt;title&gt;#{@title}&lt;/title&gt;&quot;)
+    puts('  &lt;/head&gt;')
+    puts('  &lt;body&gt;')
+    @text.each do |line|
+      puts(&quot;    &lt;p&gt;#{line}&lt;/p&gt;&quot; )
+    end
+    puts('  &lt;/body&gt;')
+    puts('&lt;/html&gt;')
+  end
+end
+
+report = Report.new
+report.output_report
+</code></pre>
+
+<p>这是输出HTML格式的文本, 那加入又有输出plain text的需求呢, 我们修改一下:</p>
+<pre><code class="ruby">class Report
+  def initialize
+    @title = 'Monthly Report'
+    @text =  ['Things are going', 'really, really well.']
+  end
+
+  def output_report(format)
+    if format == :plain
+      puts(&quot;*** #{@title} ***&quot;)
+    elsif format == :html
+      puts('&lt;html&gt;')
+      puts('  &lt;head&gt;')
+      puts(&quot;    &lt;title&gt;#{@title}&lt;/title&gt;&quot;)
+      puts('  &lt;/head&gt;')
+      puts('  &lt;body&gt;')
+    else
+      raise &quot;Unknown format: #{format}&quot;
+    end
+    @text.each do |line|
+      if format == :plain
+        puts(line)
+      else
+        puts(&quot;    &lt;p&gt;#{line}&lt;/p&gt;&quot; )
+      end
+    end
+    if format == :html
+      puts('  &lt;/body&gt;')
+      puts('&lt;/html&gt;')
+    end
+  end
+end
+</code></pre>
+
+<p>代码很复杂有没有? 如果再增加格式, 按照这样的方式写下去, 那代码就太糟糕了.</p>
+<p>而且违背了设计模式的原则之一: Separate out the things that change from those that stay the same, 将不变的与可变的分开</p>
+<p>那么我们分析一下什么是可变的, 什么是不变的.</p>
+<p>不论是HTML格式还是plain text格式, 都需要输出几个固定的部分, 只是各个部分根据不同的格式输出内容不一样, 代码可以这样优化</p>
+<pre><code class="ruby">class Report
+  def initialize
+    @title = 'MonthlyReport'
+    @text =  ['Things are going', 'really, really well.']
+  end
+
+  def output_report
+    output_start
+    output_title(@title)
+    output_body_start
+    for line in @text
+      output_line(line)
+    end
+    output_body_end
+    output_end
+  end
+
+  def output_start
+    puts('&lt;html&gt;')
+  end
+
+  def output_title(title)
+    puts('  &lt;head&gt;')
+    puts(&quot;    &lt;title&gt;#{title}&lt;/title&gt;&quot;)
+    puts('  &lt;/head&gt;')
+  end
+
+  def output_body_start
+    puts('  &lt;body&gt;')
+  end
+
+  def output_line(line)
+    puts(&quot;    &lt;p&gt;#{line}&quot;)
+  end
+
+  def output_body_end
+    puts('  &lt;/body&gt;')
+  end
+
+  def output_end
+    puts('&lt;/html')
+  end
+end
+
+class HTMLReport &lt; Report
+end
+
+class PlainTextReport &lt; Report
+  def output_start
+  end
+
+  def output_title(title)
+    puts(&quot;*** #{title} ***&quot;)
+  end
+
+  def output_body_start
+  end
+
+  def output_line(line)
+    puts(&quot;#{line}&quot;)
+  end
+
+  def output_body_end
+  end
+
+  def output_end
+  end
+end
+
+report = HTMLReport.new
+report.output_report
+
+report = PlainTextReport.new
+report.output_report
+</code></pre>
+
+<p>我们在基类里定义了“不变”的骨架, 在子类了复写了“可变”的方法, 这样不论多少种格式, 骨架都可以不变, 只需增加子类, 复写方法就可以了.</p>
+<p>The Template Method pattern is simply a fancy way of saying that if you want to vary an algorithm, one way to do so is to code the invariant part in a base class and to encapsulate the variable parts in methods that are defined by a number of subclasses. The base class can simply leave the methods completely undefined—in that case, the subclasses must supply the methods. Alternatively, the base class can provide a default implementation for the methods that the subclasses can override if they want.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
